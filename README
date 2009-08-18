@@ -1,0 +1,46 @@
+
+
+--- ForkManager Example:
+
+function testCallback($res, $task)
+{
+	echo "$res > $task\n";
+	sleep($task);
+	echo "< $task\n";
+}
+
+$forkManager = new Phork_ForkManager();
+$forkManager
+	->limit(4)
+	->resources(array('db1','db2','db3','db4'))
+	->tasks(array(1,7,2,5,3,6,4))
+	->callback('testCallback')
+	->start();
+
+
+--- Future Example:
+
+function sum($numbers)
+{
+	$total = 0;
+	foreach ($numbers as $n)
+	{
+		echo "|\n";
+		$total += $n;
+		sleep(1);
+	}
+	echo "- child finished\n";
+
+	return $total;
+}
+
+echo "\nFuture test:\n";
+$future1 = new Phork_Future(1, 'sum', array(1,2,3));
+$future2 = new Phork_Future(2, 'sum', array(1,2,3,4,5,6,7,8,9,10));
+
+echo "brb...\n";
+sleep(6); // .. Do stuff in the meantime
+echo "ok, ready now\n";
+
+echo "Total1: ".$future1->get()."\n";
+echo "Total2: ".$future2->get()."\n";
